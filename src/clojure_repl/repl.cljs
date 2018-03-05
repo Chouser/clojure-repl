@@ -12,7 +12,6 @@
 (def ashell (node/require "atom"))
 (def process (node/require "process"))
 (def nrepl (node/require "nrepl-client"))
-(def net (node/require "net"))
 
 ;; TODO: Merge with the common/state
 (def repl-state
@@ -146,8 +145,12 @@
 
 (defn interrupt-process [])
 
-(defn execute-code
+(defmulti execute-code
   "Appends the code to editor and sends it over to repl."
+  (fn [code & [options]]
+    (:repl-type @repl-state)))
+
+(defmethod execute-code :repl-type/nrepl
   [code & [options]]
   (let [lein-process (:lein-process @repl-state)
         connection (:connection @repl-state)]

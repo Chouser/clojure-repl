@@ -74,9 +74,10 @@
         process-env (clj->js {"cwd" project-path
                               "env" (goog.object.set env "PWD" project-path)})
         lein-process (.spawn child-process (first lein-exec) (clj->js (rest lein-exec)) process-env)]
-    (swap! repl-state assoc :current-working-directory project-path)
-    (swap! repl-state assoc :process-env process-env)
-    (swap! repl-state assoc :lein-process lein-process)
+    (swap! repl-state assoc :current-working-directory project-path
+                            :process-env process-env
+                            :lein-process lein-process
+                            :repl-type :repl-type/nrepl)
     (setup-process lein-process)))
 
 (defn get-env

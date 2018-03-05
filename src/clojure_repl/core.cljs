@@ -29,7 +29,16 @@
    (console-log "connect-to-nrepl startup event:" event)
    (console-log "clojure-repl on the case!")
    (host/create-editors)
-   (remote-repl/connect-to-remote-repl {:host "localhost" :port 12345})))
+   (remote-repl/connect-to-remote-nrepl {:host "localhost" :port 12345})))
+
+(defn connect-to-repl
+  "This is exported as one of the plugin commands. Connect to an existing plain
+  Clojure server REPL socket by host and port."
+  ([event]
+   (console-log "connect-to-repl startup event:" event)
+   (console-log "clojure-repl gettin' to work!")
+   (host/create-editors)
+   (remote-repl/connect-to-remote-plain-repl {:host "localhost" :port 12345})))
 
 (defn send-to-repl
   "This is exported as one of the plugin commands.
@@ -63,6 +72,7 @@
 (defn add-commands []
   (swap! disposables conj (.add commands "atom-workspace" "clojure-repl:startRepl" start-local-repl))
   (swap! disposables conj (.add commands "atom-workspace" "clojure-repl:connectToNrepl" connect-to-nrepl))
+  (swap! disposables conj (.add commands "atom-workspace" "clojure-repl:connectToRepl" connect-to-repl))
   (swap! disposables conj (.add commands "atom-workspace" "clojure-repl:sendToRepl" send-to-repl))
   (swap! disposables conj (.add commands "atom-text-editor.repl-entry" "clojure-repl:showNewerHistory" show-newer-repl-history))
   (swap! disposables conj (.add commands "atom-text-editor.repl-entry" "clojure-repl:showOlderHistory" show-older-repl-history)))
