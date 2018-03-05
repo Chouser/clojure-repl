@@ -125,9 +125,13 @@
                                                          (send-to-repl init-code {}))
                                                        (.on (.-messageStream connection) "messageSequence" handle-messages)))))))
 
-(defn stop-process
-  "Closes the nrepl connection and kills the lein process. This will also kill
-  all the child processes created by the lein process."
+(defmulti stop-process
+  "Kills the local repl process, if any, and disconnects from the repl server.
+  Until we support multiple simultaneous repls, starting a repl will call this
+  first."
+  (fn [] (or (:repl-type @repl-state) :repl-type/nrepl)))
+
+(defmethod stop-process :repl-type/nrepl
   []
   (let [lein-process (:lein-process @repl-state)
         connection (:connection @repl-state)]
